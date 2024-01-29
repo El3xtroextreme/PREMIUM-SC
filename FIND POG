@@ -6,6 +6,7 @@ AddHook("onvariant", "finding", function(var)
         return true
     end
     if var[0] == "OnConsoleMessage" and var[1]:find("This doesn't fit") then
+          finding = false
         return true
     end
     if var[0] == "OnDialogRequest" and var[1]:find("MAGPLANT 5000") then
@@ -15,26 +16,83 @@ AddHook("onvariant", "finding", function(var)
     end
 end)
 
-function wrenchu()
-SendPacketRaw(false, {type = 3, value = 32, px = x, py = yu, x = GetLocal().pos.x, y = GetLocal().pos.y})
+function logic()
+Sleep(1000)
+i()
+Sleep(1000)
 end
 
-function wrenchd()
+function i()
+if not autostop then
+x = x + 1
+FindPath(x, y,100)
+Sleep(1000)
+wrench()
+Sleep(1000)
+finding = true
+elseif autostop and not finding then
+finding = false
+end
+end
+
+local function overlayText(text)
+    var = {}
+    var[0] = "OnTextOverlay"
+    var[1] = text
+    SendVariantList(var)
+end
+
+local function warnText(text)
+    text = text
+    packet = {}
+    packet[0] = "OnAddNotification"
+    packet[1] = "interface/atomic_button.rttex"
+    packet[2] = text
+    packet[3] = "audio/hub_open.wav"
+    packet[4] = 0
+    SendVariantList(packet)
+    return true
+end
+
+function crd()
+SendPacket(2, "action|input\ntext|`e CUSTOM SC BY `b@Rei104`e. SUBS `4YT REI104")
+Sleep(1000)
+SendPacket(2, "action|input\ntext|`e CUSTOM SC BY `b@Rei104`e. SUBS `4YT REI104")
+Sleep(1000)
+end
+
+crd()
+
+warnText("`4DON'T SHARE/RESELL SCRIPT!! \n`6ONLY BUY AT DC: [`3@Rei104`6]")
+Sleep(1000)
+
+function wrench()
+if posmag == 1 then
+SendPacketRaw(false, {type = 3, value = 32, px = x, py = yu, x = GetLocal().pos.x, y = GetLocal().pos.y})
+elseif posmag == 2 then
 SendPacketRaw(false, {type = 3, value = 32, px = x, py = yd, x = GetLocal().pos.x, y = GetLocal().pos.y})
 end
+end
 
-function put()
-if posmag == 1 then
-    wrenchu()
+wrench()
+
+function findingh()
+if posmag == 1 and finding then
+    SendPacket(2, "action|dialog_return\ndialog_name|item_search\n"..ID.."|1\n")
+    Sleep(delay)
     SendPacket(2, "action|dialog_return\ndialog_name|magplant_edit\nx|"..x.."|\ny|"..yu.."|\nbuttonClicked|additems\n")
     Sleep(delay)
-elseif posmag == 2 then
-    wrenchd()
+elseif posmag == 2 and finding then
+    SendPacket(2, "action|dialog_return\ndialog_name|item_search\n"..ID.."|1\n")
+    Sleep(delay)
     SendPacket(2, "action|dialog_return\ndialog_name|magplant_edit\nx|"..x.."|\ny|"..yd.."|\nbuttonClicked|additems\n")
     Sleep(delay)
 end
 end
 
 while true do
-put()
+findingh()
+if not finding then
+logic()
+end
 end

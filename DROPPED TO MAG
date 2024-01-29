@@ -15,6 +15,37 @@ AddHook("onvariant", "finding", function(var)
     end
 end)
 
+local function overlayText(text)
+    var = {}
+    var[0] = "OnTextOverlay"
+    var[1] = text
+    SendVariantList(var)
+end
+
+local function warnText(text)
+    text = text
+    packet = {}
+    packet[0] = "OnAddNotification"
+    packet[1] = "interface/atomic_button.rttex"
+    packet[2] = text
+    packet[3] = "audio/hub_open.wav"
+    packet[4] = 0
+    SendVariantList(packet)
+    return true
+end
+
+function crd()
+SendPacket(2, "action|input\ntext|`e CUSTOM SC BY `b@Rei104`e. SUBS `4YT REI104")
+Sleep(1000)
+SendPacket(2, "action|input\ntext|`e CUSTOM SC BY `b@Rei104`e. SUBS `4YT REI104")
+Sleep(1000)
+end
+
+crd()
+
+warnText("`4DON'T SHARE/RESELL SCRIPT!! \n`6ONLY BUY AT DC: [`3@Rei104`6]")
+Sleep(1000)
+
 function wrenchu()
 SendPacketRaw(false, {type = 3, value = 32, px = x, py = yu, x = GetLocal().pos.x, y = GetLocal().pos.y})
 end

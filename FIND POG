@@ -16,25 +16,6 @@ AddHook("onvariant", "finding", function(var)
     end
 end)
 
-function logic()
-Sleep(1000)
-i()
-Sleep(1000)
-end
-
-function i()
-if not autostop then
-x = x + 1
-FindPath(x, y,100)
-Sleep(1000)
-wrench()
-Sleep(1000)
-finding = true
-elseif autostop and not finding then
-finding = false
-end
-end
-
 local function overlayText(text)
     var = {}
     var[0] = "OnTextOverlay"
@@ -91,8 +72,46 @@ end
 end
 
 while true do
+
+	if stopatlastmag then
+		if not finding then
+			Sleep(2000)
+				if GetTile(x+1,y+1).fg == 5638 then
+					x = x + 1
+					FindPath(x,y,100)
+					Sleep(1000)
+					wrench()
+					Sleep(1000)
+					finding = true
+				else
+					SendPacket(2, "action|input\ntext|`4THERE IS NO OTHER MAG IN THIS ROW !!")
+					break
+				end
+		end
+	end
+
+	if autostop then
+		if not finding then
+			Sleep(2000)
+			finding = false
+				x = x + 1
+				FindPath(x,y,100)
+				Sleep(1000)
+				SendPacket(2, "action|input\ntext|`2Click Execute To Continue Autofind")
+			break
+		end
+	end
+
+	if not stopatlastmag and not autostop then
+		SendPacket(2, "action|input\ntext|`2MAKE ONE OF THE MODE TRUE AND OTHER FALSE !!")
+		break
+	end
+
+	if stopatlastmag and autostop then
+				SendPacket(2, "action|input\ntext|`2ONLY MAKE ONE OF THE MODE TRUE, NOT BOTH !!")
+		break
+	end
+
 findingh()
-if not finding then
-logic()
-end
+
 end
